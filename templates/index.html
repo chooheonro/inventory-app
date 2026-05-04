@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>재고관리</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; }
+        a { margin-right: 8px; }
+        input, button, select { padding: 6px; margin: 3px; }
+        table { border-collapse: collapse; width: 100%; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+        th { background: #f2f2f2; }
+        .danger { color: red; font-weight: bold; }
+        .box { border: 1px solid #ddd; padding: 10px; margin-bottom: 12px; border-radius: 8px; }
+        @media (max-width: 800px) {
+            table, thead, tbody, th, td, tr { display: block; }
+            tr { margin-bottom: 15px; border: 1px solid #aaa; padding: 8px; }
+            th { display: none; }
+            td { text-align: left; border: none; border-bottom: 1px solid #eee; }
+            input { width: 95%; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <h2>재고관리 프로그램</h2>
+
+    <p>
+        사용자: {{ session['user'] }}
+        |
+        <a href="/logs">입출고 기록</a>
+        <a href="/low_stock">부족재고</a>
+        <a href="/stats">통계</a>
+        <a href="/users">직원 계정</a>
+        <a href="/change_password">비밀번호 변경</a>
+        <a href="/excel">엑셀 다운로드</a>
+        <a href="/logout">로그아웃</a>
+    </p>
+
+    {% if request.args.get('error') == 'stock' %}
+    <p class="danger">현재 재고보다 많이 출고할 수 없습니다.</p>
+    {% endif %}
+
+    {% if request.args.get('error') == 'barcode' %}
+    <p class="danger">해당 바코드 품목을 찾을 수 없습니다.</p>
+    {% endif %}
+
+    <div class="box">
+        <h3>바코드 빠른 입출고</h3>
+        <form action="/barcode_inout" method="post">
+            바코드: <input name="barcode" autofocus required>
+            수량: <input name="qty" type="number" min="1" value="1" required>
+            구분:
+            <select name="action">
+                <option>입고</option>
+                <option>출고</option>
+            </select>
+            <button>처리</button>
+        </form>
+        <small>바코드 스캐너는 보통 키보드처럼 입력돼서 이 칸에 찍으면 됨.</small>
+    </div>
+
+    <div class="box">
+        <h3>품목 추가</h3>
+        <form action="/add" method="post">
+            바코드: <input name="barcode">
+            품목명: <input name="name" required>
+            단가: <input name="price" type="number" value="0">
+            거래처: <input name="vendor">
+            최소재고: <input name="min_stock" type="number" value="0">
+            <button>추가</button>
+        </form>
+    </div>
+
+    <div class="box">
+        <h3>검색</h3>
+        <form action="/main" method="get">
+            <input name="keyword" value="{{ keyword }}" placeholder="품목명 / 거래처 / 바코드 검색">
+            <button>검색</button>
+            <a href="/main">전체보기</a>
+        </form>
+    </div>
+
+    <h3>재고 현황</h3>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>바코드</th>
+            <th>품목명</th>
+            <th>단가</th>
+            <th>거래처</th>
+            <th>현재재고</th>
+            <th>최소재고</th>
+            <th>상태</th>
+            <th>수정</th>
+            <th>입고</th>
+            <th>출고</th>
+            <th>삭제</th>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+
+            <form action="/edit/{{ item[0] }}" method="post">
+                <td><input name="barcode" value="{{ item[1] or '' }}"></td>
+                <td><input name="name" value="{{ item[2] }}"></td>
+                <td><input name="price" type="number" value="{{ item[3] }}"></td>
+                <td><input name="vendor" value="{{ item[4] }}"></td>
+                <td>{{ item[5] }}</td>
+                <td><input name="min_stock" type="number" value="{{ item[6] }}"></td>
+                <td>
+                    {% if item[5] <= item[6] %}
+                        <span class="danger">부족</span>
+                    {% else %}
+                        정상
+                    {% endif %}
+                </td>
+                <td><button type="submit">수정</button></td>
+            </form>
+
+            <td>
+                <form action="/in" method="post">
+                    <input type="hidden" name="id" value="{{ item[0] }}">
+                    <input name="qty" type="number" min="1" required>
+                    <button>입고</button>
+                </form>
+            </td>
+
+            <td>
+                <form action="/out" method="post">
+                    <input type="hidden" name="id" value="{{ item[0] }}">
+                    <input name="qty" type="number" min="1" required>
+                    <button>출고</button>
+                </form>
+            </td>
+
+            <td>
+                <a href="/delete/{{ item[0] }}" onclick="return confirm('정말 삭제할까요?')">삭제</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
