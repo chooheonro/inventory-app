@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>부족재고</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 7px; text-align: center; }
+        th { background: #f2f2f2; }
+        .danger { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>부족재고 목록</h2>
+    <p><a href="/main">재고현황으로 돌아가기</a></p>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>바코드</th>
+            <th>품목명</th>
+            <th>거래처</th>
+            <th>현재재고</th>
+            <th>최소재고</th>
+            <th>상태</th>
+        </tr>
+
+        {% for item in items %}
+        <tr>
+            <td>{{ item[0] }}</td>
+            <td>{{ item[1] }}</td>
+            <td>{{ item[2] }}</td>
+            <td>{{ item[4] }}</td>
+            <td>{{ item[5] }}</td>
+            <td>{{ item[6] }}</td>
+            <td class="danger">부족</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

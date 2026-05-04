@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>입출고 기록</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 15px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 7px; text-align: center; }
+        th { background: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>입출고 기록</h2>
+
+    <p>
+        <a href="/main">재고현황으로 돌아가기</a>
+    </p>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>품목ID</th>
+            <th>바코드</th>
+            <th>품목명</th>
+            <th>구분</th>
+            <th>수량</th>
+            <th>사용자</th>
+            <th>시간</th>
+        </tr>
+
+        {% for l in logs %}
+        <tr>
+            <td>{{ l[0] }}</td>
+            <td>{{ l[1] }}</td>
+            <td>{{ l[2] }}</td>
+            <td>{{ l[3] }}</td>
+            <td>{{ l[4] }}</td>
+            <td>{{ l[5] }}</td>
+            <td>{{ l[6] }}</td>
+            <td>{{ l[7] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

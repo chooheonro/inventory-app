@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>직원 계정</title>
+</head>
+<body>
+    <h2>직원 계정 관리</h2>
+
+    <p>
+        <a href="/main">재고현황으로 돌아가기</a>
+    </p>
+
+    <h3>직원 계정 추가</h3>
+
+    <form method="post">
+        아이디: <input name="username" required>
+        비밀번호: <input name="password" required>
+        <button>추가</button>
+    </form>
+
+    <hr>
+
+    <h3>계정 목록</h3>
+
+    <table border="1" cellpadding="5">
+        <tr>
+            <th>ID</th>
+            <th>아이디</th>
+        </tr>
+
+        {% for u in users %}
+        <tr>
+            <td>{{ u[0] }}</td>
+            <td>{{ u[1] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
